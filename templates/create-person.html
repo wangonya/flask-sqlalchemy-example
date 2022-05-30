@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Create person</h2>
+<form action="/people/add" onsubmit="send(event,this)">
+  <label for="first_name">First Name:</label>
+  <input type="text" name="first_name" value="">
+  <br>
+  <button type="submit">Create</button>
+</form>
+
+{% endblock %}

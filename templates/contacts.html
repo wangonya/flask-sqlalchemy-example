@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block header %}
+  <h1>{% block title %}Welcome to the contacts page!{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<h2>All contacts</h2>
+Contacts:
+  <ol>
+{% for person in people %}
+    <li>{{person}}</li>
+    <ul>
+      {% for contact in person.contacts %}
+        <li>{{contact}}</li>
+      {% endfor %}
+    </ul>
+{% endfor %}
+  </ol>
+{% endblock %}
+
+

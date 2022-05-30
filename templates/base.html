@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- <link href="css/style.css" rel="stylesheet"> -->
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('index') }}">Home</a></li>
+        <li><a href="{{ url_for('get_all_people') }}">All People</a></li>
+        <li><a href="{{ url_for('create_person') }}">Create Person</a></li>
+        <li><a href="{{ url_for('get_all_contacts') }}">All Contacts</a></li>
+        <li><a href="{{ url_for('create_contact') }}">Create Contact</a></li>
+      </ul>
+    </nav>
+    <section class="content">
+      <header>{% block header %}{% endblock %}</header>
+      {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+      {% endfor %} {% block content %}{% endblock %}
+    </section>
+  </body>
+  <script>
+    function send(e, form) {
+      fetch(form.action, { method: "post", body: new FormData(form) })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.redirect) {
+            window.location.href = data.redirect;
+          }
+        });
+      e.preventDefault();
+    }
+  </script>
+</html>

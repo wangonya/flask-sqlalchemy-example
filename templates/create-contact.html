@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Create contact</h2>
+<form action="/contacts/add" onsubmit="send(event,this)">
+  <label for="person_id">Person:</label>
+  <select name="person_id" id="person_id">
+      <option value="">-</option>
+    {% for person in people %}
+      <option value={{person.id}}>{{person}}</option>
+    {% endfor %}
+  </select>   
+  <br>
+  <label for="contact">Contact:</label>
+  <input type="tel" name="contact" value="">
+  <br>
+  <button type="submit">Create</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block header %}
+  <h1>{% block title %}Welcome to the people page!{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<h2>All people</h2>
+People:
+  <ol>
+{% for person in people %}
+    <li>{{person}}</li>
+{% endfor %}
+  </ol>
+{% endblock %}
+
+
