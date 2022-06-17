@@ -1,10 +1,30 @@
 import os
+import json
 
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
+
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
+CORS(app)
 
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+        "my_custom_message": "dsfh",
+    })
+    response.content_type = "application/json"
+    return response
 
 @app.route("/")
 def index():
@@ -68,6 +88,9 @@ DB_NAME = os.getenv("DB_NAME")
 app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_SERVER}:5432/{DB_NAME}"
+print(app.config[
+    "SQLALCHEMY_DATABASE_URI"
+])
 db = SQLAlchemy(app)
 
 
