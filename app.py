@@ -82,11 +82,83 @@ def contacts():
         return {"message": "contact created"}, 201
 
 
+# delete person
+@app.route("/people/<int:person_id>", methods=["DELETE"])
+def delete_person(person_id):
+    person = Person.query.get(person_id)
+    db.session.delete(person)
+    db.session.commit()
+    return {"message": "person deleted"}
+
+
+@app.route("/people/<int:person_id>", methods=["PATCH"])
+def update_person(person_id):
+    person = Person.query.get(person_id)
+    person.first_name = request.json.get("first_name")
+    db.session.commit()
+    return {"message": "person updated", "first_name": person.first_name}
+
+
 # get single contact
 
-# update contact
 
-# delete contact
+@app.route("/contacts/<int:contact_id>", methods=["DELETE"])
+def delete_contact(contact_id):
+    contact = Contact.query.get(contact_id)
+    db.session.delete(contact)
+    db.session.commit()
+    return {"message": "contact deleted"}
+
+
+@app.route("/contacts/<int:contact_id>", methods=["PATCH"])
+def update_contact(contact_id):
+    contact = Contact.query.get(contact_id)
+    contact.contact = request.json.get("contact")
+    db.session.commit()
+    return {"message": "contact updated"}
+
+
+# search
+@app.route("/people/search")
+def search_people():
+    search_term = request.args.get("first_name")
+    people = Person.query.filter(Person.first_name.ilike(f"%{search_term}%")).all()
+
+    if not people:
+        return {}, 404
+
+    result = []
+
+    for person in people:
+        result.append(
+            {
+                "id": person.id,
+                "first_name": person.first_name,
+                "contacts": [
+                    {"id": contact.id, "contact": contact.contact}
+                    for contact in person.contacts
+                ],
+            }
+        )
+    return jsonify(result)
+
+
+@app.route("/contacts/search", methods=["POST"])
+def search_contacts():
+    search_term = request.get_json().get("contact")
+    contacts = Contact.query.filter(Contact.contact.ilike(f"%{search_term}%")).all()
+    result = []
+
+    for contact in contacts:
+        result.append(
+            {
+                "id": contact.id,
+                "contact": contact.contact,
+                "person_id": contact.person_id,
+            }
+        )
+
+    return jsonify(result)
 
 
 ##########
@@ -98,10 +170,7 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_SERVER = os.getenv("DB_SERVER")
 DB_NAME = os.getenv("DB_NAME")
 
-app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_SERVER}:5432/{DB_NAME}"
-print(app.config["SQLALCHEMY_DATABASE_URI"])
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://kelvin:@localhost:5432/contacts"
 db = SQLAlchemy(app)
 
 
